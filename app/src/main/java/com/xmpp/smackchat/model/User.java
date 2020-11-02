@@ -2,11 +2,9 @@ package com.xmpp.smackchat.model;
 
 public class User {
     private String username;
-    private String status;
 
-    public User(String username, String status) {
+    public User(String username) {
         this.username = username;
-        this.status = status;
     }
 
     public String getUsername() {
@@ -17,11 +15,4 @@ public class User {
         this.username = username;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

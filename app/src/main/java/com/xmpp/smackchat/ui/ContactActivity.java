@@ -8,21 +8,20 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.dialog.MaterialDialogs;
 import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.R;
-import com.xmpp.smackchat.base.AppLog;
 import com.xmpp.smackchat.base.views.recycler.BaseRecyclerAdapter;
 import com.xmpp.smackchat.base.views.recycler.BaseRecyclerViewHolder;
 import com.xmpp.smackchat.base.views.recycler.RecyclerActionListener;
-import com.xmpp.smackchat.connection.SmackChat;
 import com.xmpp.smackchat.model.Contact;
 import com.xmpp.smackchat.model.User;
+import com.xmpp.smackchat.service.SmackChat;
 
 import org.jivesoftware.smack.roster.RosterEntry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ContactActivity extends XMPPActivity {
 
@@ -32,11 +31,8 @@ public class ContactActivity extends XMPPActivity {
         @Override
         public void onViewClick(int position, View view, BaseRecyclerViewHolder viewHolder) {
             Contact contact = contactAdapter.getData().get(position);
-            if (bound) {
-                chatService.setCurrentEntityBareJid(contact.getEntry().getJid().asEntityBareJidIfPossible());
-            }
-
             Intent chatIntent = new Intent(ContactActivity.this, ChatActivity.class);
+            chatIntent.putExtra("jid", contact.getAddress());
             startActivity(chatIntent);
         }
     };
@@ -56,7 +52,7 @@ public class ContactActivity extends XMPPActivity {
 
     private void addFriend(View view) {
         if (bound) {
-            chatService.addFriend("tiendung001@" + Constant.DOMAIN, "Test 001");
+            chatService.addFriend("tiendung001" + "@" + Constant.DOMAIN);
         }
     }
 
@@ -74,7 +70,6 @@ public class ContactActivity extends XMPPActivity {
     }
 
     private void observeContactList(List<RosterEntry> rosterEntries) {
-        AppLog.d("Roster : " + rosterEntries.size());
         List<Contact> contacts = new ArrayList<>();
         for (RosterEntry entry : rosterEntries) {
             contacts.add(new Contact(entry));
@@ -92,7 +87,7 @@ public class ContactActivity extends XMPPActivity {
 
     private void observeUserInfo(User user) {
         TextView tvUsername = findViewById(R.id.tvUsername);
-        tvUsername.setText(user.getUsername());
+        tvUsername.setText(String.format(Locale.getDefault(), "Hi, %s", user.getUsername()));
     }
 
     @Override

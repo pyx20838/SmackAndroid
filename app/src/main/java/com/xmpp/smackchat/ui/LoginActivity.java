@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.R;
-import com.xmpp.smackchat.connection.SmackChat;
+import com.xmpp.smackchat.service.SmackChat;
 
 public class LoginActivity extends XMPPActivity {
 

@@ -1,5 +1,6 @@
 package com.xmpp.smackchat.model;
 
+import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.base.views.recycler.RecyclerData;
 import com.xmpp.smackchat.base.views.recycler.RecyclerViewType;
 
@@ -22,6 +23,10 @@ public class Contact implements RecyclerData {
         return entry.getJid().getLocalpartOrNull().toString();
     }
 
+    public String getAddress() {
+        return entry.getJid().toString();
+    }
+
     @Override
     public int getViewType() {
         return RecyclerViewType.TYPE_CONTACT;
@@ -29,11 +34,19 @@ public class Contact implements RecyclerData {
 
     @Override
     public boolean areItemsTheSame(RecyclerData other) {
+        if (other instanceof Contact) {
+            Contact contact = (Contact) other;
+            return contact.entry.getJid().equals(entry.getJid());
+        }
         return false;
     }
 
     @Override
     public boolean areContentsTheSame(RecyclerData other) {
+        if (other instanceof Contact) {
+            Contact contact = (Contact) other;
+            return contact.entry.getJid().equals(entry.getJid());
+        }
         return false;
     }
 }

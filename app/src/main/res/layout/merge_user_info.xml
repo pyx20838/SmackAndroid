@@ -7,45 +7,30 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:gravity="start|center"
+        android:orientation="horizontal">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvUsername"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="?textAppearanceBody1" />
 
         <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
+            android:layout_width="8dp"
+            android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center|start"
-            android:orientation="horizontal">
+            android:text="@string/logout"
+            app:icon="@drawable/ic_logout" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAddFriend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_friend"
-                app:icon="@drawable/ic_add_friend" />
-
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/logout"
-                app:icon="@drawable/ic_logout" />
-        </LinearLayout>
     </LinearLayout>
 
 </merge>

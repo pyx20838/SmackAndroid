@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmackChat</string>
+    <string name="app_name">Smack Messenger</string>
 
     <string name="login">"Log in"</string>
     <string name="exit">"Exit"</string>
@@ -7,6 +7,7 @@
     <string name="add_group">"Add group"</string>
     <string name="add_friend">"Friend"</string>
     <string name="username">"Username"</string>
-    <string name="send">"Send message"</string>
+    <string name="send">"Send"</string>
     <string name="password">"Password"</string>
+    <string name="label_activity_contact">Contact List</string>
 </resources>

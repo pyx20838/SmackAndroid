@@ -6,14 +6,22 @@
     android:orientation="vertical"
     android:padding="12dp">
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvConversation"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:reverseLayout="false" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="12dp" />
 
     <include layout="@layout/merge_chat_area" />
 

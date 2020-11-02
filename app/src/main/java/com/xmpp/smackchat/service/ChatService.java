@@ -9,13 +9,11 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import com.xmpp.smackchat.base.AppLog;
-import com.xmpp.smackchat.connection.SmackChat;
 import com.xmpp.smackchat.model.ChatMessage;
 import com.xmpp.smackchat.model.User;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.stringprep.XmppStringprepException;
@@ -35,20 +33,20 @@ public class ChatService extends Service {
         }
     }
 
-    private SmackChat chat;
+    private SmackChat smackChat;
     private Executor executor;
 
     @Override
     public void onCreate() {
         super.onCreate();
         executor = Executors.newSingleThreadExecutor();
-        chat = new SmackChat();
+        smackChat = new SmackChat();
     }
 
     public void handleLogin(String username, String password) {
         executor.execute(() -> {
             try {
-                chat.connect(username, password);
+                smackChat.connect(username, password);
             } catch (InterruptedException | XMPPException | SmackException | IOException e) {
                 AppLog.e("Connect failed: " + e.getMessage());
             }
@@ -56,61 +54,43 @@ public class ChatService extends Service {
     }
 
     public void handleLogout() {
-        executor.execute(() -> chat.disconnect());
+        executor.execute(() -> smackChat.disconnect());
     }
 
     public LiveData<User> getUserInfo() {
-        return chat.lvUser;
+        return smackChat.lvUser;
     }
 
     public LiveData<SmackChat.ConnectionState> getConnectionState() {
-        return chat.lvConnState;
+        return smackChat.lvConnState;
     }
 
     public LiveData<List<RosterEntry>> getRosterEntries() {
-        return chat.lvRosterEntries;
+        return smackChat.lvRosterEntries;
     }
 
     public LiveData<ChatMessage> getChatMessage() {
-        return chat.lvChatMessage;
+        return smackChat.lvChatMessage;
     }
 
     public void sendMessage(EntityBareJid jid, String body) {
         executor.execute(() -> {
-            Message message = new Message();
-            message.setBody(body);
             try {
-                chat.chat(jid, message);
+                smackChat.sendMessage(jid, body);
             } catch (SmackException.NotConnectedException | InterruptedException e) {
                 AppLog.e("Send message failed: " + e.getMessage());
             }
         });
     }
 
-    public void sendMessage(String body) {
-        executor.execute(() -> {
-            Message message = new Message();
-            message.setBody(body);
-            try {
-                chat.chat(chat.currentEntityBareJid, message);
-            } catch (SmackException.NotConnectedException | InterruptedException e) {
-                AppLog.e("Send message failed: " + e.getMessage());
-            }
-        });
-    }
-
-    public void addFriend(String jidName, String name) {
+    public void addFriend(String jidName) {
         executor.execute(() -> {
             try {
-                chat.addFriend(jidName, name);
-            } catch (SmackException.NotLoggedInException | XMPPException.XMPPErrorException | SmackException.NotConnectedException | InterruptedException | SmackException.NoResponseException | XmppStringprepException e) {
+                smackChat.addFriend(jidName);
+            } catch (SmackException.NotConnectedException | InterruptedException | XmppStringprepException e) {
                 AppLog.e("Add friend error: " + e.getMessage());
             }
         });
-    }
-
-    public void setCurrentEntityBareJid(EntityBareJid jid) {
-        chat.setCurrentEntityBareJid(jid);
     }
 
     @Nullable

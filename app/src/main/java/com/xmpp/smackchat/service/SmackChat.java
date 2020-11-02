@@ -1,4 +1,4 @@
-package com.xmpp.smackchat.connection;
+package com.xmpp.smackchat.service;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -42,10 +42,6 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         CONNECTED, AUTHENTICATED, DISCONNECTED;
     }
 
-    public SmackChat() {
-
-    }
-
     private XMPPTCPConnection connection;
     private ChatManager chatManager;
     private Roster roster;
@@ -55,11 +51,8 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
     public final MutableLiveData<List<RosterEntry>> lvRosterEntries = new MutableLiveData<>();
     public final MutableLiveData<ChatMessage> lvChatMessage = new MutableLiveData<>();
 
-    public EntityBareJid currentEntityBareJid;
-
     @Override
     public void connected(XMPPConnection connection) {
-        AppLog.d("Connected");
         lvConnState.postValue(ConnectionState.CONNECTED);
     }
 
@@ -68,15 +61,18 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         AppLog.d("Authenticated");
         lvConnState.postValue(ConnectionState.AUTHENTICATED);
 
+        // Register listeners for incoming/outgoing message
         chatManager = ChatManager.getInstanceFor(connection);
         chatManager.addIncomingListener(this);
         chatManager.addOutgoingListener(this);
 
+        // Load roster
         roster = Roster.getInstanceFor(connection);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+        roster.addRosterListener(this);
+        roster.addSubscribeListener(this);
         if (!roster.isLoaded()) {
             try {
-                AppLog.d("Roster wasn't loaded");
                 roster.addRosterLoadedListener(this);
                 roster.reload();
             } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
@@ -87,19 +83,17 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         }
 
 
-        lvUser.postValue(new User(connection.getUser().getLocalpart().toString(), "available"));
+        lvUser.postValue(new User(connection.getUser().getLocalpart().toString()));
     }
 
     @Override
     public void connectionClosed() {
-        AppLog.d("Closed");
         lvConnState.postValue(ConnectionState.DISCONNECTED);
     }
 
     @Override
     public void connectionClosedOnError(Exception e) {
         lvConnState.postValue(ConnectionState.DISCONNECTED);
-        AppLog.e("connectionClosedOnError: " + e.getMessage());
     }
 
     public void connect(String username, String password) throws InterruptedException, XMPPException, SmackException, IOException {
@@ -129,7 +123,6 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
     public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
         AppLog.d("Incoming message from " + from.asEntityBareJid() + ": " + message.getBody());
         lvChatMessage.postValue(new ChatMessage(RecyclerViewType.TYPE_INCOMING_MESSAGE, from, message));
-
     }
 
     @Override
@@ -138,7 +131,7 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         lvChatMessage.postValue(new ChatMessage(RecyclerViewType.TYPE_OUTGOING_MESSAGE, to, message));
     }
 
-    public void chat(EntityBareJid jid, Message message) throws SmackException.NotConnectedException, InterruptedException {
+    public void sendMessage(EntityBareJid jid, String message) throws SmackException.NotConnectedException, InterruptedException {
         chatManager.chatWith(jid).send(message);
     }
 
@@ -147,12 +140,24 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         for (Jid jid : addresses) {
             AppLog.d("Entry added: " + jid.asDomainBareJid());
         }
+
+        try {
+            roster.reload();
+        } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void entriesUpdated(Collection<Jid> addresses) {
         for (Jid jid : addresses) {
             AppLog.d("Entry updated: " + jid.asDomainBareJid());
+        }
+
+        try {
+            roster.reload();
+        } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -161,29 +166,26 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         for (Jid jid : addresses) {
             AppLog.d("Entry deleted: " + jid.asDomainBareJid());
         }
+
+        try {
+            roster.reload();
+        } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void presenceChanged(Presence presence) {
-        Jid jid = presence.getFrom();
         AppLog.d("Presence changed " + presence.getFrom());
     }
 
-
     @Override
     public void onRosterLoaded(Roster roster) {
-        this.roster = roster;
-        this.roster.addRosterListener(this);
-        this.roster.addSubscribeListener(this);
         this.lvRosterEntries.postValue(new ArrayList<>(roster.getEntries()));
     }
 
     @Override
     public void onRosterLoadingFailed(Exception exception) {
-        this.roster.removeRosterListener(this);
-        this.roster.removeRosterLoadedListener(this);
-        this.roster.removeSubscribeListener(this);
-        this.roster = null;
     }
 
     @Override
@@ -191,11 +193,10 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         return SubscribeAnswer.ApproveAndAlsoRequestIfRequired;
     }
 
-    public void setCurrentEntityBareJid(EntityBareJid currentEntityBareJid) {
-        this.currentEntityBareJid = currentEntityBareJid;
+    public void addFriend(String jidName) throws SmackException.NotConnectedException, InterruptedException, XmppStringprepException {
+        Presence subscribe = new Presence(Presence.Type.subscribe);
+        subscribe.setTo(JidCreate.bareFrom(jidName));
+        connection.sendStanza(subscribe);
     }
 
-    public void addFriend(String jidName, String name) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, InterruptedException, SmackException.NoResponseException, XmppStringprepException {
-        roster.createEntry(JidCreate.bareFrom(jidName), name, null);
-    }
 }

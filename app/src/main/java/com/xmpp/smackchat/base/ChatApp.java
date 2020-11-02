@@ -2,6 +2,10 @@ package com.xmpp.smackchat.base;
 
 import android.app.Application;
 
+import com.xmpp.smackchat.BuildConfig;
+
+import org.jivesoftware.smack.SmackConfiguration;
+
 public class ChatApp extends Application {
     private static ChatApp sInstance;
 
@@ -13,5 +17,7 @@ public class ChatApp extends Application {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
+
+        SmackConfiguration.DEBUG = BuildConfig.DEBUG;
     }
 }

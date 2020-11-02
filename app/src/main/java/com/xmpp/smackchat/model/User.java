@@ -1,27 +1,27 @@
 package com.xmpp.smackchat.model;
 
 public class User {
-    private CharSequence username;
-    private String password;
+    private String username;
+    private String status;
 
-    public User(CharSequence username, String password) {
+    public User(String username, String status) {
         this.username = username;
-        this.password = password;
+        this.status = status;
     }
 
-    public CharSequence getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(CharSequence username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getStatus() {
+        return status;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

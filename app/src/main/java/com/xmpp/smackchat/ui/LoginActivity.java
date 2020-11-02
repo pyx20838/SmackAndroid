@@ -1,5 +1,6 @@
 package com.xmpp.smackchat.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -7,38 +8,38 @@ import androidx.annotation.Nullable;
 
 import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.R;
-import com.xmpp.smackchat.base.AppLog;
-import com.xmpp.smackchat.base.arch.BaseActivity;
-import com.xmpp.smackchat.connection.ChatConnection;
-import com.xmpp.smackchat.model.User;
+import com.xmpp.smackchat.connection.SmackChat;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
-public class LoginActivity extends BaseActivity {
-
-    private Executor executor = Executors.newSingleThreadExecutor();
-    private ChatConnection connection;
+public class LoginActivity extends XMPPActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        connection = new ChatConnection(new User(Constant.USERNAME, Constant.PASSWORD), Constant.HOST);
         findViewById(R.id.btnLogin).setOnClickListener(this::login);
+        findViewById(R.id.btnExit).setOnClickListener(view -> finish());
     }
 
     private void login(View view) {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    connection.connect();
-                } catch (Exception e) {
-                    AppLog.e("Connect failed: " + e.getMessage());
-                }
-            }
-        });
+        if (bound) {
+            chatService.handleLogin(Constant.USERNAME, Constant.PASSWORD);
+        }
+    }
+
+    @Override
+    public void onChatServiceConnected() {
+        chatService.getConnectionState().observe(this, this::observeConnState);
+    }
+
+    private void observeConnState(SmackChat.ConnectionState connectionState) {
+        if (connectionState == SmackChat.ConnectionState.AUTHENTICATED) {
+            startActivity(new Intent(this, ContactActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    public void onChatServiceDisconnected() {
+
     }
 }

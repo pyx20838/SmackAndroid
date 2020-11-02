@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import androidx.annotation.IntDef;
 import com.xmpp.smackchat.MainActivity;
+import com.xmpp.smackchat.service.ChatService;
 import com.xmpp.smackchat.ui.LoginActivity;
 
 import java.lang.annotation.Retention;
@@ -28,6 +29,8 @@ public class LauncherIntentDispatcher {
 
     public @Action
     int dispatch() {
+        fromActivity.startService(new Intent(fromActivity, ChatService.class));
+
         fromActivity.startActivity(new Intent(fromActivity, LoginActivity.class));
         return Action.ACTION_FINISH;
     }

@@ -43,7 +43,9 @@ public class ChatService extends Service {
         smackChat = new SmackChat();
     }
 
-    public void handleLogin(String username, String password) {
+
+
+    public void login(String username, String password) {
         executor.execute(() -> {
             try {
                 smackChat.connect(username, password);
@@ -53,7 +55,11 @@ public class ChatService extends Service {
         });
     }
 
-    public void handleLogout() {
+    public void register(String username, String password) {
+        executor.execute(() -> smackChat.register(username, password));
+    }
+
+    public void logout() {
         executor.execute(() -> smackChat.disconnect());
     }
 

@@ -58,7 +58,7 @@ public class ContactActivity extends XMPPActivity {
 
     private void handleLogout(View view) {
         if (bound) {
-            chatService.handleLogout();
+            chatService.logout();
         }
     }
 

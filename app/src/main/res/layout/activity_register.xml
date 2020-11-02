@@ -55,6 +55,25 @@
 
     <Space
         android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputConfirmPassword"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password_confirm"
+        app:endIconMode="password_toggle"
+        app:startIconDrawable="@drawable/ic_passwd">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Space
+        android:layout_width="match_parent"
         android:layout_height="14dp" />
 
     <LinearLayout
@@ -63,28 +82,28 @@
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogin"
+            android:id="@+id/btnRegister"
             style="@style/BasePrimaryButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/login"
+            android:text="@string/register"
             android:theme="@style/BasePrimaryButton"
-            app:icon="@drawable/ic_user" />
+            app:icon="@drawable/ic_register" />
 
         <Space
             android:layout_width="8dp"
             android:layout_height="wrap_content" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRegister"
+            android:id="@+id/btnLogin"
             style="@style/BaseSecondaryButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/register"
+            android:text="@string/login"
             android:theme="@style/BaseSecondaryButton"
-            app:icon="@drawable/ic_register" />
+            app:icon="@drawable/ic_user" />
     </LinearLayout>
 
 

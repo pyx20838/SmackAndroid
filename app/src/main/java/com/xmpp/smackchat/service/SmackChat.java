@@ -1,5 +1,6 @@
 package com.xmpp.smackchat.service;
 
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.xmpp.smackchat.Constant;
@@ -8,6 +9,7 @@ import com.xmpp.smackchat.base.views.recycler.RecyclerViewType;
 import com.xmpp.smackchat.model.ChatMessage;
 import com.xmpp.smackchat.model.User;
 
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
@@ -26,9 +28,11 @@ import org.jivesoftware.smack.roster.RosterLoadedListener;
 import org.jivesoftware.smack.roster.SubscribeListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.io.IOException;
@@ -45,6 +49,7 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
     private XMPPTCPConnection connection;
     private ChatManager chatManager;
     private Roster roster;
+
 
     public final MutableLiveData<User> lvUser = new MutableLiveData<>();
     public final MutableLiveData<ConnectionState> lvConnState = new MutableLiveData<>();
@@ -110,6 +115,53 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
 
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
         reconnectionManager.enableAutomaticReconnection();
+    }
+
+
+    public void register(String username, String password) {
+        try {
+            XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
+            builder.setHost(Constant.HOST);
+            builder.setXmppDomain(Constant.DOMAIN);
+            builder.setPort(Constant.PORT);
+
+            AbstractXMPPConnection xmppConnection = new XMPPTCPConnection(builder.build());
+            xmppConnection.addConnectionListener(new ConnectionListener() {
+                @Override
+                public void connected(XMPPConnection connection) {
+                    AccountManager accountManager = AccountManager.getInstance(connection);
+                    try {
+                        if (accountManager.supportsAccountCreation()) {
+                            accountManager.sensitiveOperationOverInsecureConnection(true);
+                            accountManager.createAccount(Localpart.from(username), password);
+
+                            connect(username, password);
+                            xmppConnection.disconnect();
+                        }
+                    } catch (InterruptedException | XMPPException | IOException | SmackException e) {
+                        AppLog.e("Register failed: " + e.getMessage());
+                    }
+                }
+
+                @Override
+                public void authenticated(XMPPConnection connection, boolean resumed) {
+
+                }
+
+                @Override
+                public void connectionClosed() {
+
+                }
+
+                @Override
+                public void connectionClosedOnError(Exception e) {
+
+                }
+            });
+            xmppConnection.connect();
+        } catch (InterruptedException | XMPPException | IOException | SmackException e) {
+            AppLog.e("Register failed: " + e.getMessage());
+        }
     }
 
     public void disconnect() {

@@ -1,5 +1,6 @@
 package com.xmpp.smackchat.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.R;
 import com.xmpp.smackchat.base.views.recycler.BaseRecyclerAdapter;
@@ -52,7 +55,20 @@ public class ContactActivity extends XMPPActivity {
 
     private void addFriend(View view) {
         if (bound) {
-            chatService.addFriend("tiendung001" + "@" + Constant.DOMAIN);
+            TextInputEditText editText = new TextInputEditText(this);
+            editText.setHint("Add your friend's id");
+            new MaterialAlertDialogBuilder(this)
+                    .setView(editText)
+                    .setPositiveButton("Add friend", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            chatService.addFriend(editText.getEditableText().toString() + "@" + Constant.DOMAIN);
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .create()
+                    .show();
+
         }
     }
 

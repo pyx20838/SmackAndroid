@@ -44,6 +44,7 @@ public class ChatActivity extends XMPPActivity {
         }
     }
 
+
     private void sendMessage(View view) {
         String body = inputChat.getEditText().getEditableText().toString();
         if (bound) {
@@ -54,11 +55,14 @@ public class ChatActivity extends XMPPActivity {
 
     @Override
     public void onChatServiceConnected() {
+        chatService.clearChat();
         chatService.getChatMessage().observe(this, this::observeChatMessage);
     }
 
     private void observeChatMessage(ChatMessage chatMessage) {
-        messageAdapter.addItem(chatMessage);
+        if (chatMessage != null) {
+            messageAdapter.addItem(chatMessage);
+        }
     }
 
     @Override

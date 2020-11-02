@@ -13,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.R;
+import com.xmpp.smackchat.base.AppLog;
 import com.xmpp.smackchat.base.views.recycler.BaseRecyclerAdapter;
 import com.xmpp.smackchat.base.views.recycler.BaseRecyclerViewHolder;
 import com.xmpp.smackchat.base.views.recycler.RecyclerActionListener;
@@ -20,6 +21,7 @@ import com.xmpp.smackchat.model.Contact;
 import com.xmpp.smackchat.model.User;
 import com.xmpp.smackchat.service.SmackChat;
 
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.RosterEntry;
 
 import java.util.ArrayList;
@@ -83,6 +85,21 @@ public class ContactActivity extends XMPPActivity {
         chatService.getUserInfo().observe(this, this::observeUserInfo);
         chatService.getConnectionState().observe(this, this::observeConnState);
         chatService.getRosterEntries().observe(this, this::observeContactList);
+        chatService.getPresence().observe(this, this::observePresence);
+    }
+
+    private void observePresence(Presence presence) {
+        AppLog.d("Presence change: " + presence.getFrom() + ", " + presence.getType().name() + ", " + presence.getMode().name());
+        // TODO - update status here
+
+        List<Contact> contacts = contactAdapter.getData();
+        for (int i = 0; i < contacts.size(); i++) {
+            if (contacts.get(i).getEntry().getJid().equals(presence.getFrom())) {
+                contacts.get(i).setOnline(presence.getType() == Presence.Type.available);
+                contactAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     private void observeContactList(List<RosterEntry> rosterEntries) {

@@ -55,6 +55,7 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
     public final MutableLiveData<ConnectionState> lvConnState = new MutableLiveData<>();
     public final MutableLiveData<List<RosterEntry>> lvRosterEntries = new MutableLiveData<>();
     public final MutableLiveData<ChatMessage> lvChatMessage = new MutableLiveData<>();
+    public final MutableLiveData<Presence> lvPresence = new MutableLiveData<>();
 
     @Override
     public void connected(XMPPConnection connection) {
@@ -86,7 +87,6 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         } else {
             onRosterLoaded(roster);
         }
-
 
         lvUser.postValue(new User(connection.getUser().getLocalpart().toString()));
     }
@@ -169,6 +169,19 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
             connection.disconnect();
             connection = null;
         }
+
+        if (roster != null) {
+            roster.addRosterListener(this);
+            roster.addSubscribeListener(this);
+            roster.addRosterLoadedListener(this);
+            roster = null;
+        }
+
+        if (chatManager != null) {
+            chatManager.addIncomingListener(this);
+            chatManager.addOutgoingListener(this);
+            chatManager = null;
+        }
     }
 
     @Override
@@ -189,10 +202,6 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
 
     @Override
     public void entriesAdded(Collection<Jid> addresses) {
-        for (Jid jid : addresses) {
-            AppLog.d("Entry added: " + jid.asDomainBareJid());
-        }
-
         try {
             roster.reload();
         } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
@@ -202,10 +211,6 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
 
     @Override
     public void entriesUpdated(Collection<Jid> addresses) {
-        for (Jid jid : addresses) {
-            AppLog.d("Entry updated: " + jid.asDomainBareJid());
-        }
-
         try {
             roster.reload();
         } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
@@ -215,10 +220,6 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
 
     @Override
     public void entriesDeleted(Collection<Jid> addresses) {
-        for (Jid jid : addresses) {
-            AppLog.d("Entry deleted: " + jid.asDomainBareJid());
-        }
-
         try {
             roster.reload();
         } catch (SmackException.NotLoggedInException | SmackException.NotConnectedException | InterruptedException e) {
@@ -228,7 +229,8 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
 
     @Override
     public void presenceChanged(Presence presence) {
-        AppLog.d("Presence changed " + presence.getFrom());
+        AppLog.d("Presence changed " + presence);
+        lvPresence.postValue(presence);
     }
 
     @Override
@@ -251,4 +253,7 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         connection.sendStanza(subscribe);
     }
 
+    public void clearChat() {
+        lvChatMessage.postValue(null);
+    }
 }

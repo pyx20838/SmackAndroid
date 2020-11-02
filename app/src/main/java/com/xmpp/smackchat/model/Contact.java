@@ -11,6 +11,8 @@ public class Contact implements RecyclerData {
 
     private RosterEntry entry;
 
+    private boolean isOnline;
+
     public Contact(RosterEntry entry) {
         this.entry = entry;
     }
@@ -25,6 +27,14 @@ public class Contact implements RecyclerData {
 
     public String getAddress() {
         return entry.getJid().toString();
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
     }
 
     @Override

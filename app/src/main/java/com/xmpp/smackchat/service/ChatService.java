@@ -14,6 +14,7 @@ import com.xmpp.smackchat.model.User;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.stringprep.XmppStringprepException;
@@ -33,6 +34,12 @@ public class ChatService extends Service {
         }
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
     private SmackChat smackChat;
     private Executor executor;
 
@@ -42,8 +49,6 @@ public class ChatService extends Service {
         executor = Executors.newSingleThreadExecutor();
         smackChat = new SmackChat();
     }
-
-
 
     public void login(String username, String password) {
         executor.execute(() -> {
@@ -79,6 +84,10 @@ public class ChatService extends Service {
         return smackChat.lvChatMessage;
     }
 
+    public LiveData<Presence> getPresence() {
+        return smackChat.lvPresence;
+    }
+
     public void sendMessage(EntityBareJid jid, String body) {
         executor.execute(() -> {
             try {
@@ -99,9 +108,7 @@ public class ChatService extends Service {
         });
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
+    public void clearChat() {
+        smackChat.clearChat();
     }
 }

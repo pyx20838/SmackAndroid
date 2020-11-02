@@ -18,8 +18,8 @@ import java.util.Random;
 
 public class ContactViewHolder extends BaseRecyclerViewHolder {
 
-    private TextView tvName;
-    private View iconStatus;
+    private final TextView tvName;
+    private final View iconStatus;
 
     public ContactViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -32,7 +32,7 @@ public class ContactViewHolder extends BaseRecyclerViewHolder {
         if (data instanceof Contact) {
             Contact contact = (Contact) data;
             tvName.setText(contact.getName());
-            setVisibility(new Random().nextBoolean());
+            setVisibility(contact.isOnline());
         }
     }
 
@@ -48,7 +48,7 @@ public class ContactViewHolder extends BaseRecyclerViewHolder {
     private void setVisibility(boolean available) {
         GradientDrawable background = new GradientDrawable();
         background.setShape(GradientDrawable.OVAL);
-        background.setColor(available ? Color.GREEN : Color.GRAY);
+        background.setColor(available ? Color.parseColor("#2EB67D") : Color.GRAY);
         iconStatus.setBackground(background);
     }
 }

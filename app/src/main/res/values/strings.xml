@@ -2,13 +2,18 @@
     <string name="app_name">Smack Messenger</string>
 
     <string name="login">"Log in"</string>
+    <string name="update">"Update settings"</string>
     <string name="register">"Register"</string>
     <string name="logout">"Log out"</string>
     <string name="add_group">"Add group"</string>
     <string name="add_friend">"Friend"</string>
     <string name="username">"Username"</string>
+    <string name="domain">"Domain"</string>
+    <string name="server">"Server address"</string>
+    <string name="port">"Port"</string>
     <string name="send">"Send"</string>
     <string name="password">"Password"</string>
     <string name="password_confirm">"Confirm Password"</string>
     <string name="label_activity_contact">Contact List</string>
+    <string name="label_activity_setting">Settings</string>
 </resources>

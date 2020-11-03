@@ -1,9 +1,11 @@
 package com.xmpp.smackchat.base;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.IntDef;
-import com.xmpp.smackchat.MainActivity;
+
 import com.xmpp.smackchat.service.ChatService;
 import com.xmpp.smackchat.ui.LoginActivity;
 
@@ -29,9 +31,22 @@ public class LauncherIntentDispatcher {
 
     public @Action
     int dispatch() {
-        fromActivity.startService(new Intent(fromActivity, ChatService.class));
+        if (!isServiceRunning()) {
+            fromActivity.startService(new Intent(fromActivity, ChatService.class));
+        }
 
         fromActivity.startActivity(new Intent(fromActivity, LoginActivity.class));
         return Action.ACTION_FINISH;
+    }
+
+    public boolean isServiceRunning() {
+        ActivityManager manager = (ActivityManager) ChatApp.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
+        if (manager == null) return false;
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (ChatService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

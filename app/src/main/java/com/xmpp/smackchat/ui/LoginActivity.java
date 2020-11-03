@@ -3,8 +3,11 @@ package com.xmpp.smackchat.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -67,5 +70,19 @@ public class LoginActivity extends XMPPActivity {
     @Override
     public void onChatServiceDisconnected() {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_setting) {
+            startActivity(new Intent(this, SettingActivity.class));
+        }
+        return true;
     }
 }

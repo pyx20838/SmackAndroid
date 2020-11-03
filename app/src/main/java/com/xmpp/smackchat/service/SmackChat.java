@@ -3,12 +3,13 @@ package com.xmpp.smackchat.service;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.base.AppLog;
 import com.xmpp.smackchat.base.views.recycler.RecyclerViewType;
 import com.xmpp.smackchat.model.ChatMessage;
 import com.xmpp.smackchat.model.Contact;
 import com.xmpp.smackchat.model.User;
+import com.xmpp.smackchat.repo.Repo;
+import com.xmpp.smackchat.repo.RepoImpl;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
@@ -45,13 +46,13 @@ import java.util.Set;
 public class SmackChat implements ConnectionListener, IncomingChatMessageListener, OutgoingChatMessageListener, RosterListener, RosterLoadedListener, SubscribeListener {
 
     public enum ConnectionState {
-        CONNECTED, AUTHENTICATED, DISCONNECTED;
+        CONNECTED, AUTHENTICATED, DISCONNECTED
     }
 
     private XMPPTCPConnection connection;
     private ChatManager chatManager;
     private Roster roster;
-
+    private final Repo repo = RepoImpl.getInstance();
 
     public final MutableLiveData<User> lvUser = new MutableLiveData<>();
     public final MutableLiveData<ConnectionState> lvConnState = new MutableLiveData<>();
@@ -105,9 +106,9 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
 
     public void connect(String username, String password) throws InterruptedException, XMPPException, SmackException, IOException {
         XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
-        builder.setHost(Constant.HOST);
-        builder.setXmppDomain(Constant.DOMAIN);
-        builder.setPort(Constant.PORT);
+        builder.setHost(repo.getServerAddr());
+        builder.setXmppDomain(repo.getDomain());
+        builder.setPort(repo.getPort());
         builder.setUsernameAndPassword(username, password);
 
         connection = new XMPPTCPConnection(builder.build());
@@ -123,9 +124,9 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
     public void register(String username, String password) {
         try {
             XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
-            builder.setHost(Constant.HOST);
-            builder.setXmppDomain(Constant.DOMAIN);
-            builder.setPort(Constant.PORT);
+            builder.setHost(repo.getServerAddr());
+            builder.setXmppDomain(repo.getDomain());
+            builder.setPort(repo.getPort());
 
             AbstractXMPPConnection xmppConnection = new XMPPTCPConnection(builder.build());
             xmppConnection.addConnectionListener(new ConnectionListener() {

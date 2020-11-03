@@ -38,6 +38,10 @@
             android:name=".ui.RegisterActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.SettingActivity"
+            android:screenOrientation="portrait" />
+
         <service android:name=".service.ChatService" />
     </application>
 

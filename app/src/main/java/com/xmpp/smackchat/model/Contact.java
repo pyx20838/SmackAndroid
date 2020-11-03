@@ -1,5 +1,7 @@
 package com.xmpp.smackchat.model;
 
+import android.text.TextUtils;
+
 import com.xmpp.smackchat.base.views.recycler.RecyclerData;
 import com.xmpp.smackchat.base.views.recycler.RecyclerViewType;
 
@@ -21,7 +23,8 @@ public class Contact implements RecyclerData {
     }
 
     public String getName() {
-        return entry.getJid().getLocalpartOrNull().toString();
+        String name = entry.getName();
+        return TextUtils.isEmpty(name) ? entry.getJid().getLocalpartOrNull().toString() : name;
     }
 
     public String getAddress() {
@@ -54,7 +57,8 @@ public class Contact implements RecyclerData {
         if (other instanceof Contact) {
             Contact contact = (Contact) other;
             return contact.entry.getJid().equals(entry.getJid())
-                    && contact.isAvailable() == isAvailable();
+                    && contact.presence.getMode() == presence.getMode()
+                    && contact.presence.getType() == presence.getType();
         }
         return false;
     }
@@ -64,7 +68,8 @@ public class Contact implements RecyclerData {
         if (other instanceof Contact) {
             Contact contact = (Contact) other;
             return contact.entry.getJid().equals(entry.getJid())
-                    && contact.isAvailable() == isAvailable();
+                    && contact.presence.getMode() == presence.getMode()
+                    && contact.presence.getType() == presence.getType();
         }
         return false;
     }

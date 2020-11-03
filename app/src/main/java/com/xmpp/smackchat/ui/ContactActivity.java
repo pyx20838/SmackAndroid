@@ -84,30 +84,24 @@ public class ContactActivity extends XMPPActivity {
     public void onChatServiceConnected() {
         chatService.getUserInfo().observe(this, this::observeUserInfo);
         chatService.getConnectionState().observe(this, this::observeConnState);
-        chatService.getRosterEntries().observe(this, this::observeContactList);
+        chatService.getContacts().observe(this, this::observeContactList);
         chatService.getPresence().observe(this, this::observePresence);
     }
 
     private void observePresence(Presence presence) {
         AppLog.d("Presence change: " + presence.getFrom() + ", " + presence.getType().name() + ", " + presence.getMode().name());
-        // TODO - update status here
 
         List<Contact> contacts = contactAdapter.getData();
         for (int i = 0; i < contacts.size(); i++) {
-            if (contacts.get(i).getEntry().getJid().equals(presence.getFrom())) {
-                contacts.get(i).setOnline(presence.getType() == Presence.Type.available);
+            if (contacts.get(i).getEntry().getJid().equals(presence.getFrom().asBareJid())) {
+                contacts.get(i).setPresence(presence);
                 contactAdapter.notifyItemChanged(i);
                 break;
             }
         }
     }
 
-    private void observeContactList(List<RosterEntry> rosterEntries) {
-        List<Contact> contacts = new ArrayList<>();
-        for (RosterEntry entry : rosterEntries) {
-            contacts.add(new Contact(entry));
-        }
-
+    private void observeContactList(List<Contact> contacts) {
         contactAdapter.update(contacts);
     }
 
@@ -127,6 +121,4 @@ public class ContactActivity extends XMPPActivity {
     public void onChatServiceDisconnected() {
         // Do nothing
     }
-
-
 }

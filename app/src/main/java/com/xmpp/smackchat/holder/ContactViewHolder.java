@@ -7,14 +7,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.R;
 import com.xmpp.smackchat.base.views.recycler.BaseRecyclerViewHolder;
 import com.xmpp.smackchat.base.views.recycler.RecyclerActionListener;
 import com.xmpp.smackchat.base.views.recycler.RecyclerData;
 import com.xmpp.smackchat.model.Contact;
-
-import java.util.Random;
 
 public class ContactViewHolder extends BaseRecyclerViewHolder {
 
@@ -32,7 +29,7 @@ public class ContactViewHolder extends BaseRecyclerViewHolder {
         if (data instanceof Contact) {
             Contact contact = (Contact) data;
             tvName.setText(contact.getName());
-            setVisibility(contact.isOnline());
+            setVisibility(contact);
         }
     }
 
@@ -45,10 +42,17 @@ public class ContactViewHolder extends BaseRecyclerViewHolder {
         });
     }
 
-    private void setVisibility(boolean available) {
+    private void setVisibility(Contact contact) {
         GradientDrawable background = new GradientDrawable();
         background.setShape(GradientDrawable.OVAL);
-        background.setColor(available ? Color.parseColor("#2EB67D") : Color.GRAY);
+        background.setColor(getColorByStatus(contact));
         iconStatus.setBackground(background);
+    }
+
+    private int getColorByStatus(Contact contact) {
+        if (contact.isAvailable()) return Color.parseColor("#2EB67D");
+        else if (contact.isBusy()) return Color.parseColor("#C2185B");
+        else if (contact.isAway()) return Color.parseColor("#D69209");
+        else return Color.GRAY;
     }
 }

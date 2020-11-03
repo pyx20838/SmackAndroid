@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 
 import com.xmpp.smackchat.base.AppLog;
 import com.xmpp.smackchat.model.ChatMessage;
+import com.xmpp.smackchat.model.Contact;
 import com.xmpp.smackchat.model.User;
 
 import org.jivesoftware.smack.SmackException;
@@ -76,8 +77,8 @@ public class ChatService extends Service {
         return smackChat.lvConnState;
     }
 
-    public LiveData<List<RosterEntry>> getRosterEntries() {
-        return smackChat.lvRosterEntries;
+    public LiveData<List<Contact>> getContacts() {
+        return smackChat.lvContacts;
     }
 
     public LiveData<ChatMessage> getChatMessage() {

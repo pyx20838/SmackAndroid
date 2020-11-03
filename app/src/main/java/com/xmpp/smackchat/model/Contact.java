@@ -1,20 +1,19 @@
 package com.xmpp.smackchat.model;
 
-import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.base.views.recycler.RecyclerData;
 import com.xmpp.smackchat.base.views.recycler.RecyclerViewType;
 
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.RosterEntry;
-import org.jxmpp.jid.EntityBareJid;
 
 public class Contact implements RecyclerData {
 
-    private RosterEntry entry;
+    private final RosterEntry entry;
+    private Presence presence;
 
-    private boolean isOnline;
-
-    public Contact(RosterEntry entry) {
+    public Contact(RosterEntry entry, Presence presence) {
         this.entry = entry;
+        this.presence = presence;
     }
 
     public RosterEntry getEntry() {
@@ -29,12 +28,20 @@ public class Contact implements RecyclerData {
         return entry.getJid().toString();
     }
 
-    public boolean isOnline() {
-        return isOnline;
+    public boolean isAvailable() {
+        return presence.getMode() == Presence.Mode.available && presence.isAvailable();
     }
 
-    public void setOnline(boolean online) {
-        isOnline = online;
+    public boolean isBusy() {
+        return presence.getMode() == Presence.Mode.dnd && presence.isAvailable();
+    }
+
+    public boolean isAway() {
+        return presence.getMode() == Presence.Mode.away && presence.isAvailable();
+    }
+
+    public void setPresence(Presence presence) {
+        this.presence = presence;
     }
 
     @Override
@@ -46,7 +53,8 @@ public class Contact implements RecyclerData {
     public boolean areItemsTheSame(RecyclerData other) {
         if (other instanceof Contact) {
             Contact contact = (Contact) other;
-            return contact.entry.getJid().equals(entry.getJid());
+            return contact.entry.getJid().equals(entry.getJid())
+                    && contact.isAvailable() == isAvailable();
         }
         return false;
     }
@@ -55,7 +63,8 @@ public class Contact implements RecyclerData {
     public boolean areContentsTheSame(RecyclerData other) {
         if (other instanceof Contact) {
             Contact contact = (Contact) other;
-            return contact.entry.getJid().equals(entry.getJid());
+            return contact.entry.getJid().equals(entry.getJid())
+                    && contact.isAvailable() == isAvailable();
         }
         return false;
     }

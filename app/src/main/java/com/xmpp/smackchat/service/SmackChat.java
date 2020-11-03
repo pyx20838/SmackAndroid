@@ -7,6 +7,7 @@ import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.base.AppLog;
 import com.xmpp.smackchat.base.views.recycler.RecyclerViewType;
 import com.xmpp.smackchat.model.ChatMessage;
+import com.xmpp.smackchat.model.Contact;
 import com.xmpp.smackchat.model.User;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class SmackChat implements ConnectionListener, IncomingChatMessageListener, OutgoingChatMessageListener, RosterListener, RosterLoadedListener, SubscribeListener {
 
@@ -53,7 +55,7 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
 
     public final MutableLiveData<User> lvUser = new MutableLiveData<>();
     public final MutableLiveData<ConnectionState> lvConnState = new MutableLiveData<>();
-    public final MutableLiveData<List<RosterEntry>> lvRosterEntries = new MutableLiveData<>();
+    public final MutableLiveData<List<Contact>> lvContacts = new MutableLiveData<>();
     public final MutableLiveData<ChatMessage> lvChatMessage = new MutableLiveData<>();
     public final MutableLiveData<Presence> lvPresence = new MutableLiveData<>();
 
@@ -235,7 +237,14 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
 
     @Override
     public void onRosterLoaded(Roster roster) {
-        this.lvRosterEntries.postValue(new ArrayList<>(roster.getEntries()));
+        List<Contact> contacts = new ArrayList<>();
+        Set<RosterEntry> entries = roster.getEntries();
+        for (RosterEntry entry : entries) {
+            Presence presence = roster.getPresence(entry.getJid());
+            Contact contact = new Contact(entry, presence);
+            contacts.add(contact);
+        }
+        this.lvContacts.postValue(contacts);
     }
 
     @Override

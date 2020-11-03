@@ -12,6 +12,7 @@ import com.xmpp.smackchat.repo.Repo;
 import com.xmpp.smackchat.repo.RepoImpl;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
@@ -110,6 +111,7 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
         builder.setXmppDomain(repo.getDomain());
         builder.setPort(repo.getPort());
         builder.setUsernameAndPassword(username, password);
+        builder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
 
         connection = new XMPPTCPConnection(builder.build());
         connection.addConnectionListener(this);
@@ -127,6 +129,7 @@ public class SmackChat implements ConnectionListener, IncomingChatMessageListene
             builder.setHost(repo.getServerAddr());
             builder.setXmppDomain(repo.getDomain());
             builder.setPort(repo.getPort());
+            builder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
 
             AbstractXMPPConnection xmppConnection = new XMPPTCPConnection(builder.build());
             xmppConnection.addConnectionListener(new ConnectionListener() {

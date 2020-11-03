@@ -105,6 +105,7 @@ public class ContactActivity extends XMPPActivity {
 
     private void observeConnState(SmackChat.ConnectionState state) {
         if (state == SmackChat.ConnectionState.DISCONNECTED) {
+            AppLog.d("Connection: " + state);
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }

@@ -4,7 +4,6 @@ package com.xmpp.smackchat.base.repository.api.callback;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-
 import com.xmpp.smackchat.base.AppLog;
 
 import retrofit2.Call;

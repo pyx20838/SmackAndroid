@@ -22,9 +22,7 @@ import com.xmpp.smackchat.model.User;
 import com.xmpp.smackchat.service.SmackChat;
 
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.roster.RosterEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 

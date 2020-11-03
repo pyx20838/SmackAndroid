@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 
 import com.xmpp.smackchat.base.ChatApp;
 
-import org.jivesoftware.smack.chat2.Chat;
-
 import java.util.Set;
 
 public class BasePrefs {

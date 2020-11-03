@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
-import com.xmpp.smackchat.Constant;
 import com.xmpp.smackchat.R;
 import com.xmpp.smackchat.service.SmackChat;
 

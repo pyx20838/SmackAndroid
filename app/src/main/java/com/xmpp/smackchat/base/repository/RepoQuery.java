@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
-
 import com.xmpp.smackchat.base.repository.api.common.Resource;
 import com.xmpp.smackchat.base.repository.api.common.ResponseCode;
 
